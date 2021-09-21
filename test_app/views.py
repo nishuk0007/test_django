@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from test_app.serializers import UserSerializer
 from rest_framework.viewsets import ModelViewSet
+
 # from test_app.paginations import CustomPagination
 
 
@@ -23,19 +24,8 @@ class UpdateMultipleUsersActiveStatusView(generics.UpdateAPIView):
             ids = [ids]
         qss = self.queryset.filter(id__in=ids)
         if qss:
-            try:
-                if active_status == 'active':
-                    for qs in qss:
-                        qs.is_active = True
-                        qs.save()
-                    return Response({"status": "OK"})
-                else:
-                    for qs in qss:
-                        qs.is_active = False
-                        qs.save()
-                    return Response({"status": "OK"})
-            except Exception as e:
-                print(e)
+            qss.update(is_active=True)
+            return Response({"status": "OK"})
         else:
             return Response({"status": "Record not found"})
 
@@ -51,11 +41,7 @@ class DeleteMultipleUsersView(generics.DestroyAPIView):
             ids = [ids]
         qss = self.queryset.filter(id__in=ids)
         if qss:
-            try:
-                for qs in qss:
-                    qs.delete()
-                return Response({"status": "OK"})
-            except Exception as e:
-                print(e)
+            qss.delete()
+            return Response({"status": "OK"})
         else:
             return Response({"status": "Record not found"})
