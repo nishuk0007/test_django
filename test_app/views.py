@@ -24,8 +24,12 @@ class UpdateMultipleUsersActiveStatusView(generics.UpdateAPIView):
             ids = [ids]
         qss = self.queryset.filter(id__in=ids)
         if qss:
-            qss.update(is_active=True)
-            return Response({"status": "OK"})
+            if active_status == 'active':
+                qss.update(is_active=True)
+                return Response({"status": "OK"})
+            else:
+                qss.update(is_active=False)
+                return Response({"status": "OK"})
         else:
             return Response({"status": "Record not found"})
 
